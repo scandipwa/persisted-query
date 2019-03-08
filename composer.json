@@ -1,0 +1,36 @@
+{
+    "name": "scandipwa/persisted-query",
+    "type": "magento2-module",
+    "description": "ScandiPWA persisted query module",
+    "keywords": [
+        "magento2",
+        "theme",
+        "installer",
+        "scandipwa",
+        "pwa"
+    ],
+    "license": [
+        "OSL-3.0"
+    ],
+    "support": {
+        "email": "info@scandiweb.com"
+    },
+    "authors": [
+        {
+            "name": "Ilja Lapkovskis",
+            "email": "ilja@scandiweb.com"
+        }
+    ],
+    "require": {
+        "magento/product-community-edition": "^2.3",
+        "predis/predis": "^1.1"
+    },
+    "autoload": {
+        "files": [
+            "src/registration.php"
+        ],
+        "psr-4": {
+            "ScandiPWA\\PersistedQuery\\": "src"
+        }
+    }
+}
