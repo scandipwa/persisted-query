@@ -10,8 +10,23 @@ However, current module extends the usage of persisted queries to actually cache
 3. PHP ext-phpiredis is suggested for faster serialization and deserialization 
 
 ## Config
+### magento setup:config:set
+For the convenience there are additional flags available for `php bin/magento setup:config:set` command:
+
+`--pq-host`[mandatory] - persisted query redis host  (`redis` for ScandiPWA docker setup)
+
+`--pq-port`[mandatory] - persisted query redis port (`6379` for ScandiPWA docker setup)
+
+`--pq-database`[mandatory] - persisted query redis database (`5` for ScandiPWA docker setup)
+
+`--pq-password`[optional, **empty password is not allowed**] - persisted query redis password
+
+`--pq-scheme`[optional, default `tcp`] - persisted query redis scheme
+
+
+### Manual configuration
 Configuration for custom Redis storage, where hashes and GraphQl documents are kept in environment config 
-(`app/etc/env.php`) -> `cache/persisted-query` and must be configured manually:
+(`app/etc/env.php`) -> `cache/persisted-query` and can be configured manually:
 ```
 	'persisted-query' => [
 		'redis' => [
