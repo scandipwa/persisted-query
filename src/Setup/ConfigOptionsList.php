@@ -122,8 +122,6 @@ class ConfigOptionsList implements ConfigOptionsListInterface
         
         if (isset($options[self::INPUT_KEY_PQ_SCHEME])) {
             $configData->set($this->prefixerHelper('scheme'), $options[self::INPUT_KEY_PQ_SCHEME]);
-        } elseif(!$deploymentConfig->get(self::INPUT_KEY_PQ_SCHEME)) {
-            $configData->set($this->prefixerHelper('scheme'), self::INPUT_DEFAULT_PQ_SCHEME);
         }
         
         if (isset($options[self::INPUT_KEY_PQ_PASSWORD])) {

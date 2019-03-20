@@ -19,10 +19,9 @@ For the convenience there are additional flags available for `php bin/magento se
 
 `--pq-database`[mandatory] - persisted query redis database (`5` for ScandiPWA docker setup)
 
+`--pq-scheme`[mandatory] - persisted query redis scheme
+
 `--pq-password`[optional, **empty password is not allowed**] - persisted query redis password
-
-`--pq-scheme`[optional, default `tcp`] - persisted query redis scheme
-
 
 ### Manual configuration
 Configuration for custom Redis storage, where hashes and GraphQl documents are kept in environment config 

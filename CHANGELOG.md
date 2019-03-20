@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.1] - 2019-03-20
+### Changed
+- `--pq-scheme` is not setting `tcp` by default.
+- Move CHANGELOG.md to the root of the module
+- README.md
+
 ## [1.1.0] - 2019-03-20
 ### Added
 - Added custom flags to `setup:config:set` CLI command
@@ -16,8 +22,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.0] - 2019-03-08
 ### Added
 - Initial commit
-- Added predis/predis as dependency
-- Added persisted query support
-- Added Magento 2 module registration: ScandiPWA_PersistedQuery
-- Added `Plugin\PersistedQuery` for `Magento\GraphQl\Controller\GraphQl`
-- Added `Plugin\PersistedQuery` for `ScandiPWA\GraphQl\Controller\GraphQl`
+- predis/predis as dependency
+- persisted query support
+- Magento 2 module registration: ScandiPWA_PersistedQuery
+- `Plugin\PersistedQuery` registered for `Magento\GraphQl\Controller\GraphQl`
+- `Plugin\PersistedQuery` registered for `ScandiPWA\GraphQl\Controller\GraphQl`
