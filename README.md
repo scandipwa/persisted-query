@@ -11,9 +11,10 @@ However, current module extends the usage of persisted queries to actually cache
 
 ## Config
 ### magento setup:config:set
-For the convenience there are `php bin/magento setup:config:set` additional flags available:
+For the convenience there are additional flags available for `php bin/magento setup:config:set` command:
 
 `--pq-host`[mandatory] - persisted query redis host  (`redis` for ScandiPWA docker setup)
+
 `--pq-port`[mandatory] - persisted query redis port (`6379` for ScandiPWA docker setup)
 
 `--pq-database`[mandatory] - persisted query redis database (`5` for ScandiPWA docker setup)
