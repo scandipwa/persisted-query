@@ -88,16 +88,30 @@ class RedisClient
     {
         return $this->client->exists($hash);
     }
-
+    
+    /**
+     * @param string $hash
+     * @param int    $ttl
+     * @return mixed
+     */
     public function setQueryTTL(string $hash, int $ttl)
     {
         $hash .= self::TTL_QUERY_PREFIX;
         return $this->client->set($hash, $ttl);
     }
-
+    
+    /**
+     * @param string $hash
+     * @return string
+     */
     public function getQueryTTL(string $hash)
     {
         $hash .= self::TTL_QUERY_PREFIX;
         return $this->client->get($hash);
+    }
+    
+    public function flushDb()
+    {
+        return $this->client->flushdb();
     }
 }
