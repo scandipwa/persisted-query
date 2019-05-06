@@ -4,7 +4,11 @@
   @author     Mediotype                     https://www.mediotype.com/
   -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Cache/etc/cache.xsd">
-    <type name="persisted_query" translate="label,description" instance="ScandiPWA\PersistedQuery\Model\Cache\Type">
+    <type name="persisted_query_response" translate="label,description" instance="ScandiPWA\PersistedQuery\Model\Cache\Response">
+        <label><![CDATA[Persisted query response]]></label>
+        <description><![CDATA[Persisted query response]]></description>
+    </type>
+    <type name="persisted_query" translate="label,description" instance="ScandiPWA\PersistedQuery\Model\Cache\Query">
         <label><![CDATA[Persisted query]]></label>
         <description><![CDATA[Persisted query]]></description>
     </type>

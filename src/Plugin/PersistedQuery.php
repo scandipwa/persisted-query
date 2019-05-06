@@ -16,8 +16,10 @@ use Magento\Framework\Interception\InterceptorInterface;
 use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Framework\Webapi\Response;
 use Psr\Log\LoggerInterface;
+use ScandiPWA\PersistedQuery\Model\Cache\Response as ResponseCache;
 use ScandiPWA\PersistedQuery\RedisClient;
 use Zend\Http\Response as HttpResponse;
+use Magento\Framework\App\Cache\StateInterface;
 
 
 class PersistedQuery
@@ -46,25 +48,32 @@ class PersistedQuery
      * @var Response
      */
     private $response;
-
+    
+    /**
+     * @var bool
+     */
+    private $cacheState;
+    
     /**
      * PersistedQuery constructor.
-     *
-     * @param Response $response
-     * @param RedisClient $redisClient
+     * @param Response            $response
+     * @param RedisClient         $redisClient
      * @param SerializerInterface $serializer
-     * @param LoggerInterface $logger
+     * @param LoggerInterface     $logger
+     * @param StateInterface      $cacheState
      */
     public function __construct(
         Response $response,
         RedisClient $redisClient,
         SerializerInterface $serializer,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        StateInterface $cacheState
     ) {
         $this->serializer = $serializer;
         $this->response = $response;
         $this->client = $redisClient;
         $this->logger = $logger;
+        $this->cacheState = $cacheState->isEnabled(strtolower(ResponseCache::CACHE_TAG));
     }
 
     /**
@@ -126,7 +135,7 @@ class PersistedQuery
         $json = $this->serializer->unserialize($result->getContent());
         $responseHasError = array_key_exists('errors', $json) && count($json['errors']);
         if ($result->getStatusCode() === 200 && !$responseHasError) {
-            $queryTTL = $this->client->getQueryTTL($queryHash);
+            $queryTTL = $this->cacheState ? $this->client->getQueryTTL($queryHash) : 0;
             $result->setHeader('Cache-control', 'max-age=' . $queryTTL ?? self::QUERY_TTL);
         }
 
