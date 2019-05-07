@@ -24,9 +24,10 @@ class Response extends TagScope
     const POOL_TAG = 'persisted_q_resp';
     
     /**
-     * Type constructor.
+     * Response constructor.
      * @param FrontendPool $frontendPool
      * @param RedisClient  $redisClient
+     * @param PurgeCache   $purgeCache
      */
     public function __construct(
         FrontendPool $frontendPool,
