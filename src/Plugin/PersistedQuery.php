@@ -10,7 +10,6 @@
 
 namespace ScandiPWA\PersistedQuery\Plugin;
 
-
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Interception\InterceptorInterface;
 use Magento\Framework\Serialize\SerializerInterface;
@@ -20,7 +19,6 @@ use ScandiPWA\PersistedQuery\Model\Cache\Response as ResponseCache;
 use ScandiPWA\PersistedQuery\RedisClient;
 use Zend\Http\Response as HttpResponse;
 use Magento\Framework\App\Cache\StateInterface;
-
 
 class PersistedQuery
 {
@@ -136,6 +134,7 @@ class PersistedQuery
         $responseHasError = array_key_exists('errors', $json) && count($json['errors']);
         if ($result->getStatusCode() === 200 && !$responseHasError) {
             $queryTTL = $this->cacheState ? $this->client->getQueryTTL($queryHash) : 0;
+            $result->setHeader('X-Pool', ResponseCache::POOL_TAG);
             $result->setHeader('Cache-control', 'max-age=' . $queryTTL ?? self::QUERY_TTL);
         }
 
