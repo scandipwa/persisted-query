@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+/**
+ * ScandiPWA_PersistedQuery
+ *
+ * @category    ScandiPWA
+ * @package     ScandiPWA_PersistedQuery
+ * @author      Ilja Lapkovskis <ilja@scandiweb.com | info@scandiweb.com>
+ * @copyright   Copyright (c) 2019 Scandiweb, Ltd (https://scandiweb.com)
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Cache/etc/cache.xsd">
+    <type name="persisted_query" translate="label,description" instance="ScandiPWA\PersistedQuery\Model\Cache\Query">
+        <label><![CDATA[Persisted query]]></label>
+        <description><![CDATA[REDIS query hashes]]></description>
+    </type>
+    <type name="persisted_query_response" translate="label,description" instance="ScandiPWA\PersistedQuery\Model\Cache\Response">
+        <label><![CDATA[Persisted query response]]></label>
+        <description><![CDATA[VARNISH cached GraphQl responses]]></description>
+    </type>
+</config>
