@@ -37,6 +37,18 @@ Configuration for custom Redis storage, where hashes and GraphQl documents are k
 	]
 ```
 
+## Cache control
+
+Available from v1.2.0
+
+CLI command `magento cache:flush` and admin panel `Cache Management` has necessary logic to flush both: redis and 
+varnish caches used for persisted queries.
+
+`persisted_query_response` - can be disabled, controls `varnish` caches (graphql response caches).
+
+`persisted_query` - can not be disabled, controls `redis` AND `varnish` caches.
+
+
 ## Usage
 Dynamic persisted query suppose Client to register unknown queries with a series of request-response.
 
