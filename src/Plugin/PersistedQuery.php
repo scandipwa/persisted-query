@@ -15,8 +15,9 @@ use Magento\Framework\Interception\InterceptorInterface;
 use Magento\Framework\Serialize\SerializerInterface;
 use Magento\Framework\Webapi\Response;
 use Psr\Log\LoggerInterface;
-use ScandiPWA\PersistedQuery\Model\Cache\Response as ResponseCache;
+use ScandiPWA\PersistedQuery\Cache\Response as ResponseCache;
 use ScandiPWA\PersistedQuery\RedisClient;
+use Zend\Http\Exception\InvalidArgumentException;
 use Zend\Http\Response as HttpResponse;
 use Magento\Framework\App\Cache\StateInterface;
 
@@ -80,7 +81,7 @@ class PersistedQuery
      * @param RequestInterface $request
      * @return Response
      * @throws \InvalidArgumentException
-     * @throws \Zend\Http\Exception\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function aroundDispatch(
         InterceptorInterface $interceptor,
@@ -105,7 +106,7 @@ class PersistedQuery
      * @param RequestInterface $request
      * @return Response
      * @throws \InvalidArgumentException
-     * @throws \Zend\Http\Exception\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function processRequest(InterceptorInterface $interceptor, RequestInterface $request): Response
     {
@@ -132,7 +133,7 @@ class PersistedQuery
         $result = $interceptor->___callParent('dispatch', [$request]);
         $json = $this->serializer->unserialize($result->getContent());
         $responseHasError = array_key_exists('errors', $json) && count($json['errors']);
-        if ($result->getStatusCode() === 200 && !$responseHasError) {
+        if (!$responseHasError && $result->getStatusCode() === 200) {
             $queryTTL = $this->cacheState ? $this->client->getQueryTTL($queryHash) : 0;
             $result->setHeader('X-Pool', ResponseCache::POOL_TAG);
             $result->setHeader('Cache-control', 'max-age=' . $queryTTL ?? self::QUERY_TTL);
@@ -195,7 +196,7 @@ class PersistedQuery
      * @param RequestInterface $request
      * @return Response
      * @throws \InvalidArgumentException
-     * @throws \Zend\Http\Exception\InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     private function saveQuery(RequestInterface $request): Response
     {

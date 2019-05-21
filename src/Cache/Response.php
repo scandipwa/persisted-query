@@ -8,57 +8,47 @@
  * @copyright   Copyright (c) 2019 Scandiweb, Ltd (https://scandiweb.com)
  */
 
-namespace ScandiPWA\PersistedQuery\Model\Cache;
-
+namespace ScandiPWA\PersistedQuery\Cache;
 
 use Magento\Framework\App\Cache\Type\FrontendPool;
 use Magento\Framework\Cache\Frontend\Decorator\TagScope;
-use ScandiPWA\PersistedQuery\RedisClient;
+use ScandiPWA\PersistedQuery\Model\PurgeCache;
 
-/**
- * Class Query
- * @package ScandiPWA\PersistedQuery\Model\Cache
- */
-class Query extends TagScope
+class Response extends TagScope
 {
-    const TYPE_IDENTIFIER = 'PERSISTED_QUERY';
+    public const TYPE_IDENTIFIER = 'PERSISTED_QUERY_RESPONSE';
     
-    const CACHE_TAG = 'PERSISTED_QUERY';
+    public const CACHE_TAG = 'PERSISTED_QUERY_RESPONSE';
+    
+    public const POOL_TAG = 'persisted_q_resp';
     
     /**
-     * @var Response
+     * @var PurgeCache
      */
-    private $responseCache;
+    private $purgeCache;
     
     /**
-     * Query constructor.
+     * Response constructor.
      * @param FrontendPool $frontendPool
-     * @param RedisClient  $redisClient
-     * @param Response     $responseCache
+     * @param PurgeCache   $purgeCache
      */
     public function __construct(
         FrontendPool $frontendPool,
-        RedisClient $redisClient,
-        Response $responseCache
+        PurgeCache $purgeCache
     )
     {
-        $this->client = $redisClient;
-        $this->responseCache = $responseCache;
+        $this->purgeCache = $purgeCache;
         parent::__construct($frontendPool->get(self::TYPE_IDENTIFIER), self::CACHE_TAG);
     }
     
     /**
      * @param string $mode
      * @param array  $tags
-     * @return bool
+     * @return bool|void
      */
     public function clean($mode = \Zend_Cache::CLEANING_MODE_ALL, array $tags = [])
     {
-        $varnishPurge = $this->responseCache->clean();
-        $redisFlush = $this->client->flushDb();
-        $redisFlush = $redisFlush == 'OK';
-        
-        return $varnishPurge && $redisFlush;
+        return $this->purgeCache->sendPurgeRequest(self::POOL_TAG);
     }
     
 }

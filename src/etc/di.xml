@@ -16,4 +16,11 @@
     <type name="ScandiPWA\GraphQl\Controller\GraphQl">
         <plugin name="scandipwa_persisted_query" type="ScandiPWA\PersistedQuery\Plugin\PersistedQuery" />
     </type>
+    <type name="Magento\Framework\Console\CommandList">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="scandipwa_pq_flush" xsi:type="object">ScandiPWA\PersistedQuery\Console\Command\PersistedQueryFlushCommand</item>
+            </argument>
+        </arguments>
+    </type>
 </config>
