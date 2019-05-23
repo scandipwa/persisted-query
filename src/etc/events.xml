@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * ScandiPWA_PersistedQuery
+ *
+ * @category    ScandiPWA
+ * @package     ScandiPWA_PersistedQuery
+ * @author      Ilja Lapkovskis <ilja@scandiweb.com | info@scandiweb.com>
+ * @copyright   Copyright (c) 2019 Scandiweb, Ltd (https://scandiweb.com)
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="adminhtml_cache_flush_all">
+        <observer name="flush_pq_varnish" instance="ScandiPWA\PersistedQuery\Cache\Observer\FlushAllPQ"/>
+    </event>
+</config>

@@ -7,6 +7,7 @@
  * @author      Ilja Lapkovskis <ilja@scandiweb.com | info@scandiweb.com>
  * @copyright   Copyright (c) 2019 Scandiweb, Ltd (https://scandiweb.com)
  */
+
 namespace ScandiPWA\PersistedQuery\Setup;
 
 use Magento\Framework\Config\Data\ConfigData;
@@ -55,7 +56,7 @@ class ConfigOptionsList implements ConfigOptionsListInterface
      * Config path
      */
     const CONFIG_PATH_PERSISTED_QUERY = 'cache/persisted-query/redis';
-
+    
     /**
      * {@inheritdoc}
      */
@@ -97,9 +98,9 @@ class ConfigOptionsList implements ConfigOptionsListInterface
     
     protected function prefixerHelper(String $path)
     {
-        return self::CONFIG_PATH_PERSISTED_QUERY . '/'. $path;
+        return self::CONFIG_PATH_PERSISTED_QUERY . '/' . $path;
     }
-
+    
     /**
      * {@inheritdoc}
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
@@ -127,10 +128,10 @@ class ConfigOptionsList implements ConfigOptionsListInterface
         if (isset($options[self::INPUT_KEY_PQ_PASSWORD])) {
             $configData->set($this->prefixerHelper('password'), $options[self::INPUT_KEY_PQ_PASSWORD]);
         }
-
+        
         return [$configData];
     }
-
+    
     /**
      * {@inheritdoc}
      */
@@ -157,7 +158,7 @@ class ConfigOptionsList implements ConfigOptionsListInterface
             !preg_match('/^\S+$/', $options[self::INPUT_KEY_PQ_PASSWORD])) {
             $errors[] = "Persisted query redis password can not be empty";
         }
-
+        
         return $errors;
     }
 }

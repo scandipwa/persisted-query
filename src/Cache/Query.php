@@ -11,15 +11,13 @@
 namespace ScandiPWA\PersistedQuery\Cache;
 
 
-use Magento\Framework\App\Cache\Type\FrontendPool;
-use Magento\Framework\Cache\Frontend\Decorator\TagScope;
 use ScandiPWA\PersistedQuery\RedisClient;
 
 /**
  * Class Query
  * @package ScandiPWA\PersistedQuery\Model\Cache
  */
-class Query extends TagScope
+class Query
 {
     public const TYPE_IDENTIFIER = 'PERSISTED_QUERY';
     
@@ -37,19 +35,16 @@ class Query extends TagScope
     
     /**
      * Query constructor.
-     * @param FrontendPool $frontendPool
-     * @param RedisClient  $redisClient
-     * @param Response     $responseCache
+     * @param RedisClient $redisClient
+     * @param Response    $responseCache
      */
     public function __construct(
-        FrontendPool $frontendPool,
         RedisClient $redisClient,
         Response $responseCache
     )
     {
         $this->client = $redisClient;
         $this->responseCache = $responseCache;
-        parent::__construct($frontendPool->get(self::TYPE_IDENTIFIER), self::CACHE_TAG);
     }
     
     /**

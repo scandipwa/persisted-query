@@ -23,4 +23,11 @@
             </argument>
         </arguments>
     </type>
+    <type name="Magento\Framework\App\Cache\Type\FrontendPool">
+        <arguments>
+            <argument name="typeFrontendMap" xsi:type="array">
+                <item name="persisted_query_response" xsi:type="string">page_cache</item>
+            </argument>
+        </arguments>
+    </type>
 </config>

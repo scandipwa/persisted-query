@@ -16,7 +16,7 @@ use ScandiPWA\PersistedQuery\Model\PurgeCache;
 
 class Response extends TagScope
 {
-    public const TYPE_IDENTIFIER = 'PERSISTED_QUERY_RESPONSE';
+    public const TYPE_IDENTIFIER = 'persisted_query_response';
     
     public const CACHE_TAG = 'PERSISTED_QUERY_RESPONSE';
     
