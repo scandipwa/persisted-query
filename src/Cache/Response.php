@@ -48,7 +48,7 @@ class Response extends TagScope
      */
     public function clean($mode = \Zend_Cache::CLEANING_MODE_ALL, array $tags = [])
     {
-        return $this->purgeCache->sendPurgeRequest(self::POOL_TAG);
+        return $this->purgeCache->sendPoolPurgeRequest(self::POOL_TAG);
     }
     
 }

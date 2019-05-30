@@ -22,7 +22,7 @@ class PurgeCache extends CorePurgeCache
      * @param string $poolTag
      * @return bool
      */
-    public function sendPurgeRequest($poolTag): bool
+    public function sendPoolPurgeRequest($poolTag): bool
     {
         $socketAdapter = $this->socketAdapterFactory->create();
         $servers = $this->cacheServer->getUris();
