@@ -30,4 +30,7 @@
             </argument>
         </arguments>
     </type>
+    <type name="Magento\Catalog\Model\Indexer\Category\Product\Action\Full">
+        <plugin name="invalidate_pq_response_cache" type="ScandiPWA\PersistedQuery\Plugin\InvalidatePQCache" />
+    </type>
 </config>
