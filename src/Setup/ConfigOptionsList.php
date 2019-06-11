@@ -96,7 +96,7 @@ class ConfigOptionsList implements ConfigOptionsListInterface
         ];
     }
     
-    protected function prefixerHelper(String $path)
+    protected function prefixerHelper(string $path)
     {
         return self::CONFIG_PATH_PERSISTED_QUERY . '/' . $path;
     }
