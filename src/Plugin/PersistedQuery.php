@@ -111,11 +111,11 @@ class PersistedQuery
      * @param InterceptorInterface $interceptor
      * @param RequestInterface     $request
      *
-     * @return ResponseInterface
+     * @return ResponseInterface|HttpResponse
      * @throws \InvalidArgumentException
      * @throws InvalidArgumentException
      */
-    public function processRequest(InterceptorInterface $interceptor, RequestInterface $request): ResponseInterface
+    public function processRequest(InterceptorInterface $interceptor, RequestInterface $request)
     {
         $queryHash = $request->getParam('hash');
         $queryExists = $this->client->queryExists($queryHash);
@@ -204,11 +204,11 @@ class PersistedQuery
 
     /**
      * @param RequestInterface $request
-     * @return ResponseInterface
+     * @return ResponseInterface|HttpResponse
      * @throws \InvalidArgumentException
      * @throws InvalidArgumentException
      */
-    private function saveQuery(RequestInterface $request): ResponseInterface
+    private function saveQuery(RequestInterface $request)
     {
         $requestQuery = $this->serializer->unserialize($request->getContent());
         if (is_array($requestQuery) && array_key_exists('query', $requestQuery)) {
