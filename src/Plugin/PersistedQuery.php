@@ -1,7 +1,6 @@
 <?php
 /**
  * ScandiPWA_PersistedQuery
- *
  * @category    ScandiPWA
  * @package     ScandiPWA_PersistedQuery
  * @author      Ilja Lapkovskis <ilja@scandiweb.com | info@scandiweb.com>
@@ -56,7 +55,6 @@ class PersistedQuery
 
     /**
      * PersistedQuery constructor.
-     *
      * @param Response            $response
      * @param RedisClient         $redisClient
      * @param SerializerInterface $serializer
@@ -69,7 +67,8 @@ class PersistedQuery
         SerializerInterface $serializer,
         LoggerInterface $logger,
         StateInterface $cacheState
-    ) {
+    )
+    {
         $this->serializer = $serializer;
         $this->response = $response;
         $this->client = $redisClient;
@@ -81,7 +80,6 @@ class PersistedQuery
      * @param InterceptorInterface $interceptor
      * @param \Closure             $next
      * @param RequestInterface     $request
-     *
      * @return ResponseInterface
      * @throws \InvalidArgumentException
      * @throws InvalidArgumentException
@@ -90,7 +88,8 @@ class PersistedQuery
         InterceptorInterface $interceptor,
         \Closure $next,
         RequestInterface $request
-    ): ResponseInterface {
+    ): ResponseInterface
+    {
 
         // Skip unsupported methods, e.g. OPTIONS that could be used in some setups
         if (!in_array($request->getMethod(), ['GET', 'PUT'])) {
@@ -107,7 +106,6 @@ class PersistedQuery
     /**
      * @param InterceptorInterface $interceptor
      * @param RequestInterface     $request
-     *
      * @return ResponseInterface|HttpResponse
      * @throws \InvalidArgumentException
      * @throws InvalidArgumentException
@@ -150,7 +148,6 @@ class PersistedQuery
     /**
      * @param string $query
      * @param        $args
-     *
      * @return string
      * @throws \InvalidArgumentException
      */
@@ -201,7 +198,6 @@ class PersistedQuery
 
     /**
      * @param RequestInterface $request
-     *
      * @return ResponseInterface|HttpResponse
      * @throws \InvalidArgumentException
      * @throws InvalidArgumentException
