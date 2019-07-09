@@ -56,6 +56,7 @@ class PersistedQuery
 
     /**
      * PersistedQuery constructor.
+     *
      * @param Response            $response
      * @param RedisClient         $redisClient
      * @param SerializerInterface $serializer
@@ -68,8 +69,7 @@ class PersistedQuery
         SerializerInterface $serializer,
         LoggerInterface $logger,
         StateInterface $cacheState
-    )
-    {
+    ) {
         $this->serializer = $serializer;
         $this->response = $response;
         $this->client = $redisClient;
@@ -90,8 +90,7 @@ class PersistedQuery
         InterceptorInterface $interceptor,
         \Closure $next,
         RequestInterface $request
-    ): ResponseInterface
-    {
+    ): ResponseInterface {
 
         // Skip unsupported methods, e.g. OPTIONS that could be used in some setups
         if (!in_array($request->getMethod(), ['GET', 'PUT'])) {
@@ -99,9 +98,7 @@ class PersistedQuery
         }
 
         if (!array_key_exists('hash', $request->getParams())) {
-            $res =  $interceptor->___callParent('dispatch', [$request]);
-
-            return $res;
+            return $interceptor->___callParent('dispatch', [$request]);
         }
 
         return $this->processRequest($interceptor, $request);
@@ -132,8 +129,8 @@ class PersistedQuery
         }
 
         $graphQlQuery = $this->resolveCachedQuery($this->client->getPersistentQuery($queryHash), $request->getParams());
-        $request->setParams($graphQlQuery);
-//        $request->setContent($graphQlQuery);
+        $request->setMethod('post');
+        $request->setContent($graphQlQuery);
 
         /**
          * @var Response $result
@@ -153,14 +150,15 @@ class PersistedQuery
     /**
      * @param string $query
      * @param        $args
+     *
      * @return string
      * @throws \InvalidArgumentException
      */
-    private function resolveCachedQuery(string $query, $args): array
+    private function resolveCachedQuery(string $query, $args): string
     {
         unset($args['hash']);
         $export = [
-            'query' => $query,
+            'query'     => $query,
             // Preserve typing
             'variables' => array_map(function ($item) {
                 // Check for complex JSON structs
@@ -193,17 +191,17 @@ class PersistedQuery
                 if (is_numeric($item)) {
                     return (int)$item;
                 }
+
                 return $item;
             }, $args),
         ];
 
-        $export['variables'] = \json_encode($export['variables']);
-
-        return $export;
+        return $this->serializer->serialize($export);
     }
 
     /**
      * @param RequestInterface $request
+     *
      * @return ResponseInterface|HttpResponse
      * @throws \InvalidArgumentException
      * @throws InvalidArgumentException
