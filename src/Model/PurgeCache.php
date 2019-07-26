@@ -11,6 +11,7 @@
 namespace ScandiPWA\PersistedQuery\Model;
 
 use Magento\CacheInvalidate\Model\PurgeCache as CorePurgeCache;
+use Zend\Uri\Uri;
 
 /**
  * Class PurgeCache
@@ -19,10 +20,11 @@ use Magento\CacheInvalidate\Model\PurgeCache as CorePurgeCache;
 class PurgeCache extends CorePurgeCache
 {
     /**
-     * @param string $poolTag
+     * @param $poolTag string
      * @return bool
+     * @throws PurgeCacheException
      */
-    public function sendPoolPurgeRequest($poolTag): bool
+    public function sendPoolPurgeRequest(string $poolTag): bool
     {
         $socketAdapter = $this->socketAdapterFactory->create();
         $servers = $this->cacheServer->getUris();
@@ -39,14 +41,38 @@ class PurgeCache extends CorePurgeCache
                     '1.1',
                     $headers
                 );
-                $socketAdapter->read();
+                $response = $socketAdapter->read();
                 $socketAdapter->close();
             } catch (\Exception $e) {
-                echo "Error!! ";
-                return false;
+                throw new PurgeCacheException(sprintf('Error reaching Varnish: %s', $e->getMessage()));
             }
+            $this->validateResponse($server, $response);
         }
         return true;
     }
     
+    /**
+     * @param Uri    $server
+     * @param string $response
+     * @return bool|null
+     * @throws PurgeCacheException
+     */
+    private function validateResponse(Uri $server, string $response): ?bool
+    {
+        $regexParse = [];
+        preg_match('/^HTTP\/\d+.\d+\s(\d+)([\s\S]+)Date:/', $response, $regexParse);
+        if (count($regexParse) >= 2) {
+            $responseCode = $regexParse[1];
+            if ($responseCode === '200') {
+                return true;
+            }
+            $message = sprintf('Error flushing Varnish server. Host: "%s". PURGE response code: %s',
+                $server->getHost(), $responseCode);
+            if (isset($regexParse[2])) {
+                $responseMessage = $regexParse[2];
+                $message .= sprintf(' message: %s', trim($responseMessage));
+            }
+            throw new PurgeCacheException($message);
+        }
+    }
 }

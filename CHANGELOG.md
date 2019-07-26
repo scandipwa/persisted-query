@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.4.3] - 2019-07-26
+### Added
+- verbose error messages for Varnish flush requests
+
 ## [1.3.0] - 2019-05-23
 ### Added
 -  Event observer for`bin/magento cache:flush` to trigger persisted query varnish storage flush (happens also on 
