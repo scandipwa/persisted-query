@@ -22,7 +22,7 @@
         }
     ],
     "require": {
-        "magento/product-community-edition": "^2.3",
+        "magento/product-community-edition": "~2.3.2",
         "predis/predis": "^1.1"
     },
     "autoload": {
