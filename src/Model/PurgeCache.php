@@ -74,5 +74,6 @@ class PurgeCache extends CorePurgeCache
             }
             throw new PurgeCacheException($message);
         }
+        throw new PurgeCacheException(sprintf('Response is malformed. Response: %s', $response));
     }
 }
