@@ -184,11 +184,17 @@ class PersistedQuery
                 if ($item === 'true' || $item === 'false') {
                     return filter_var($item, FILTER_VALIDATE_BOOLEAN);
                 }
+
                 // String to int if number
-                if (is_numeric($item)) {
+                if (is_int($item)) {
                     return (int)$item;
                 }
-
+                
+                // String to float if number with decimals
+                if (is_float($item)) {
+                    return (float)$item;
+                }
+                
                 return $item;
             }, $args),
         ];
