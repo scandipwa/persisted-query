@@ -166,7 +166,7 @@ class PersistedQuery
                         if (strpos($value, '"') !== false || !$value) {
                             continue;
                         }
-                        $item = preg_replace("|(?<![\"A-z])" . $value . "(?![\"A-z])|", "\"$value\"", $item);
+                        $item = preg_replace("|(?<![\"\w])" . $value . "(?![\"\w])|", "\"$value\"", $item);
                     }
                     
                     return $this->serializer->unserialize($item);
