@@ -50,7 +50,7 @@ class InvalidatePQCache
     public function afterExecute(AbstractAction $subject, AbstractAction $result)
     {
         if ($this->cacheState) {
-            $this->typeList->invalidate('persisted_query_response');
+            $this->typeList->invalidate(ResponseCache::TYPE_IDENTIFIER);
         }
         return $result;
     }

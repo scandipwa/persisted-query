@@ -31,9 +31,14 @@ class RedisClient
     private $cacheConfig;
 
     /**
-     * @var \Predis\Client
+     * @var \Credis_Client
      */
     private $client;
+    
+    /**
+     * @var string
+     */
+    private $redisClientClass;
 
     /**
      * RedisClient constructor.
@@ -44,21 +49,37 @@ class RedisClient
      */
     public function __construct(
         DeploymentConfig $config,
-        string $redisClientClass = \Predis\Client::class
+        string $redisClientClass = \Credis_Client::class
     ) {
         $this->cacheConfig = $config->get(self::PERSISTENT_QUERY_CONFIG);
         if (!$this->configExists()) {
             throw new \Exception('Redis is not configured for persistent queries');
         }
-        $this->client = new $redisClientClass($this->cacheConfig['redis']);
+        $this->redisClientClass = $redisClientClass;
+        $this->client = $this->redisClientFactory($this->cacheConfig['redis']);
+    }
+    
+    /**
+     * @param array $redisConfig
+     * @return \Credis_Client
+     */
+    private function redisClientFactory(array $redisConfig): \Credis_Client
+    {
+        return new $this->redisClientClass(
+            $redisConfig['host'],
+            $redisConfig['port'],
+            10,
+            '',
+            $redisConfig['database']
+        );
     }
 
     /**
      * @param string $hash
      * @param string $query
-     * @return mixed
+     * @return bool
      */
-    public function updatePersistentQuery(string $hash, string $query)
+    public function updatePersistentQuery(string $hash, string $query): bool
     {
         return $this->client->set($hash, $query);
     }
@@ -92,9 +113,9 @@ class RedisClient
     /**
      * @param string $hash
      * @param int    $ttl
-     * @return mixed
+     * @return bool
      */
-    public function setQueryTTL(string $hash, int $ttl)
+    public function setQueryTTL(string $hash, int $ttl): bool
     {
         $hash .= self::TTL_QUERY_PREFIX;
         return $this->client->set($hash, $ttl);

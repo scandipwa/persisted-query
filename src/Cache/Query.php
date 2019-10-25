@@ -56,7 +56,6 @@ class Query
     {
         $varnishPurge = $this->responseCache->clean();
         $redisFlush = $this->client->flushDb();
-        $redisFlush = $redisFlush == 'OK';
         
         return $varnishPurge && $redisFlush;
     }

@@ -1,6 +1,7 @@
 {
     "name": "scandipwa/persisted-query",
     "type": "magento2-module",
+    "version": "2.1.0",
     "description": "ScandiPWA persisted query module",
     "keywords": [
         "magento2",
@@ -23,7 +24,7 @@
     ],
     "require": {
         "magento/magento2-base": "~2.3.2",
-        "predis/predis": "^1.1"
+        "colinmollenhour/credis": "^1.10"
     },
     "autoload": {
         "files": [
