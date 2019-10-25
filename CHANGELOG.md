@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.5.0] - 2019-10-25
+### Changed
+- Replace predis/predis with `colinmollenhour/credis`, that supports `PhpRedis` module for high load. 
+
 ## [1.4.3] - 2019-07-26
 ### Added
 - verbose error messages for Varnish flush requests

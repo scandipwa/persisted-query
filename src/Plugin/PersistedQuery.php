@@ -215,7 +215,7 @@ class PersistedQuery
         }
         
         $update = $this->client->updatePersistentQuery($request->getParam('hash'), $requestQuery);
-        if ($update->getPayload() !== 'OK') {
+        if (!$update) {
             $this->logger->error('Redis failed to save query', debug_backtrace());
             
             return $this->response
