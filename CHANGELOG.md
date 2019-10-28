@@ -10,18 +10,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 - Replace predis/predis with `colinmollenhour/credis`, that supports `PhpRedis` module for high load.
 
+## [1.5.0] - 2019-10-25
+### Changed
+- Replace predis/predis with `colinmollenhour/credis`, that supports `PhpRedis` module for high load.
+
+## [2.0.2] - 2019-10-23
+### Changed
+- Fix argument value partial escaping
+
+## [1.4.8] - 2019-10-23
+### Changed
+- Fix argument value partial escaping
+
 ## [2.0.1] - 2019-10-18
 ### Changed
-- Fix float parameter handling
+- Fix float parameter handling 
+
+## [1.4.7] - 2019-10-18
+### Changed
+- Fix float parameter handling 
 
 ## [2.0.0] - 2019-07-29
 ### Changed
 - Magento 2.3.2 adoption
 - Fixes
-
-## [1.5.0] - 2019-10-25
-### Changed
-- Replace predis/predis with `colinmollenhour/credis`, that supports `PhpRedis` module for high load. 
 
 ## [1.4.3] - 2019-07-26
 ### Added

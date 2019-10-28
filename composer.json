@@ -1,7 +1,6 @@
 {
     "name": "scandipwa/persisted-query",
     "type": "magento2-module",
-    "version": "2.1.0",
     "description": "ScandiPWA persisted query module",
     "keywords": [
         "magento2",
