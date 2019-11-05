@@ -27,32 +27,32 @@ class PersistedQuery
      * How long to cache queries in Varnish
      */
     protected const QUERY_TTL = 60;
-    
+
     /**
      * @var SerializerInterface
      */
     protected $serializer;
-    
+
     /**
      * @var RedisClient
      */
     private $client;
-    
+
     /**
      * @var LoggerInterface
      */
     private $logger;
-    
+
     /**
      * @var Response
      */
     private $response;
-    
+
     /**
      * @var bool
      */
     private $cacheState;
-    
+
     /**
      * PersistedQuery constructor.
      * @param Response            $response
@@ -75,7 +75,7 @@ class PersistedQuery
         $this->logger = $logger;
         $this->cacheState = $cacheState->isEnabled(strtolower(ResponseCache::CACHE_TAG));
     }
-    
+
     /**
      * @param InterceptorInterface $interceptor
      * @param \Closure             $next
@@ -90,19 +90,19 @@ class PersistedQuery
         RequestInterface $request
     ): Response
     {
-        
+
         // Skip unsupported methods, e.g. OPTIONS that could be used in some setups
         if (!in_array($request->getMethod(), ['GET', 'PUT'])) {
             return $next($request);
         }
-        
+
         if (!array_key_exists('hash', $request->getParams())) {
             return $interceptor->___callParent('dispatch', [$request]);
         }
-        
+
         return $this->processRequest($interceptor, $request);
     }
-    
+
     /**
      * @param InterceptorInterface $interceptor
      * @param RequestInterface     $request
@@ -114,7 +114,7 @@ class PersistedQuery
     {
         $queryHash = $request->getParam('hash');
         $queryExists = $this->client->queryExists($queryHash);
-        
+
         if (!$queryExists) {
             if ($request->getMethod() === 'GET') {
                 return $this->response
@@ -122,13 +122,13 @@ class PersistedQuery
                     ->setBody(json_encode(['error' => true, 'code' => '410', 'message' => 'Query hash is unknown']))
                     ->setStatusCode(HttpResponse::STATUS_CODE_410);
             }
-            
+
             return $this->saveQuery($request);
         }
-        
+
         $graphQlQuery = $this->resolveCachedQuery($this->client->getPersistentQuery($queryHash), $request->getParams());
         $request->setContent($graphQlQuery);
-        
+
         /**
          * @var Response $result
          */
@@ -140,10 +140,10 @@ class PersistedQuery
             $result->setHeader('X-Pool', ResponseCache::POOL_TAG);
             $result->setHeader('Cache-control', 'max-age=' . $queryTTL ?? self::QUERY_TTL);
         }
-        
+
         return $result;
     }
-    
+
     /**
      * @param string $query
      * @param        $args
@@ -166,19 +166,19 @@ class PersistedQuery
                         if (strpos($value, '"') !== false || !$value) {
                             continue;
                         }
-                        $item = preg_replace("|(?<![\"\w])" . $value . "(?![\"\w])|", "\"$value\"", $item);
+                        $item = preg_replace("|(?<![\"\w.-])" . $value . "(?![\"\w.-])|", "\"$value\"", $item);
                     }
-                    
+
                     return $this->serializer->unserialize($item);
                 }
-                
+
                 // Check for encoded array
                 if (preg_match('/,/', $item)) {
                     $item = explode(',', $item);
-                    
+
                     return $item;
                 }
-                
+
                 // String to bool if bool
                 if ($item === 'true' || $item === 'false') {
                     return filter_var($item, FILTER_VALIDATE_BOOLEAN);
@@ -197,10 +197,10 @@ class PersistedQuery
                 return $item;
             }, $args),
         ];
-        
+
         return $this->serializer->serialize($export);
     }
-    
+
     /**
      * @param RequestInterface $request
      * @return Response
@@ -213,11 +213,11 @@ class PersistedQuery
         if (is_array($requestQuery) && array_key_exists('query', $requestQuery)) {
             $requestQuery = $requestQuery['query'];
         }
-        
+
         $update = $this->client->updatePersistentQuery($request->getParam('hash'), $requestQuery);
         if (!$update) {
             $this->logger->error('Redis failed to save query', debug_backtrace());
-            
+
             return $this->response
                 ->setStatusCode(HttpResponse::STATUS_CODE_502)
                 ->setHeader('Content-Type', 'application/json')
@@ -225,9 +225,9 @@ class PersistedQuery
                     'error' => true, 'code' => '502', 'message' => 'Can not save the query',
                 ]));
         }
-        
+
         $this->client->setQueryTTL($request->getParam('hash'), $request->getHeader('SW-cache-age'));
-        
+
         return $this->response
             ->setHeader('Content-Type', 'application/json')
             ->setBody(json_encode(['error' => false, 'code' => '1', 'message' => 'Query registered']))
