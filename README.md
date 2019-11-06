@@ -7,7 +7,7 @@ However, current module extends the usage of persisted queries to actually cache
 ## Prerequisites
 1. Varnish
 2. Redis
-3. PHP ext-phpiredis is suggested for faster serialization and deserialization 
+3. PHP ext-phpredis is suggested for faster serialization and deserialization 
 
 ## Config
 ### magento setup:config:set
