@@ -34,11 +34,15 @@ class RedisClient
      * @var \Credis_Client
      */
     private $client;
-    
+
     /**
      * @var string
      */
     private $redisClientClass;
+    /**
+     * @var DeploymentConfig
+     */
+    private $config;
 
     /**
      * RedisClient constructor.
@@ -52,13 +56,26 @@ class RedisClient
         string $redisClientClass = \Credis_Client::class
     ) {
         $this->cacheConfig = $config->get(self::PERSISTENT_QUERY_CONFIG);
-        if (!$this->configExists()) {
-            throw new \Exception('Redis is not configured for persistent queries');
-        }
         $this->redisClientClass = $redisClientClass;
         $this->client = $this->redisClientFactory($this->cacheConfig['redis']);
+        $this->config = $config;
+        $this->checkPersistentQueriesConfig();
     }
-    
+
+    /**
+     * Checks if persistent config is configured
+     * But only when Magento is operational
+     *
+     * @throws \Exception
+     */
+    protected function checkPersistentQueriesConfig()
+    {
+        if (!$this->configExists() && $this->config->isAvailable()) {
+            throw new \Exception('Redis is not configured for persistent queries');
+        }
+    }
+
+
     /**
      * @param array $redisConfig
      * @return \Credis_Client
@@ -109,7 +126,7 @@ class RedisClient
     {
         return $this->client->exists($hash);
     }
-    
+
     /**
      * @param string $hash
      * @param int    $ttl
@@ -120,7 +137,7 @@ class RedisClient
         $hash .= self::TTL_QUERY_PREFIX;
         return $this->client->set($hash, $ttl);
     }
-    
+
     /**
      * @param string $hash
      * @return string
@@ -130,7 +147,7 @@ class RedisClient
         $hash .= self::TTL_QUERY_PREFIX;
         return $this->client->get($hash);
     }
-    
+
     public function flushDb()
     {
         return $this->client->flushdb();
