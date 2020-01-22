@@ -139,7 +139,7 @@ class ConfigOptionsList implements ConfigOptionsListInterface
     {
         $errors = [];
         if (isset($options[self::INPUT_KEY_PQ_HOST]) &&
-            !preg_match('/^[a-zA-Z0-9_\.]+$/', $options[self::INPUT_KEY_PQ_HOST])) {
+            !preg_match('/^[a-zA-Z0-9\-_\.]+$/', $options[self::INPUT_KEY_PQ_HOST])) {
             $errors[] = "Invalid persisted query redis host";
         }
         if (isset($options[self::INPUT_KEY_PQ_PORT]) &&
