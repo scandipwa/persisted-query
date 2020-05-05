@@ -227,7 +227,11 @@ class PersistedQuery
                 ]));
         }
 
-        $this->client->setQueryTTL($request->getParam('hash'), $request->getHeader('SW-cache-age'));
+        if (is_integer($request->getHeader('SW-cache-age'))) {
+            $this->client->setQueryTTL($request->getParam('hash'), $request->getHeader('SW-cache-age'));
+        } else {
+            $this->client->setQueryTTL($request->getParam('hash'), 0);
+        }
 
         return $this->response
             ->setHeader('Content-Type', 'application/json')
