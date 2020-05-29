@@ -10,7 +10,14 @@
 
 namespace ScandiPWA\PersistedQuery\Model;
 
+use Exception;
 use Magento\CacheInvalidate\Model\PurgeCache as CorePurgeCache;
+use Magento\CacheInvalidate\Model\SocketFactory;
+use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Framework\Cache\InvalidateLogger;
+use Magento\PageCache\Model\Cache\Server;
+use Magento\PageCache\Model\Config;
+use Magento\Store\Model\ScopeInterface;
 use Zend\Uri\Uri;
 
 /**
@@ -19,6 +26,41 @@ use Zend\Uri\Uri;
  */
 class PurgeCache extends CorePurgeCache
 {
+    /** @var ScopeConfigInterface */
+    protected $scopeConfig;
+
+    /**
+     * Constructor
+     *
+     * @param Server $cacheServer
+     * @param SocketFactory $socketAdapterFactory
+     * @param InvalidateLogger $logger
+     * @param ScopeConfigInterface $scopeConfig
+     */
+    public function __construct(
+        Server $cacheServer,
+        SocketFactory $socketAdapterFactory,
+        InvalidateLogger $logger,
+        ScopeConfigInterface $scopeConfig
+    ) {
+        $this->scopeConfig = $scopeConfig;
+
+        parent::__construct(
+            $cacheServer,
+            $socketAdapterFactory,
+            $logger
+        );
+    }
+
+    /**
+     * Skip non-varnish instances
+     * @return bool
+     */
+    protected function getIsPurgeNecessary(): bool {
+        $cachingApp = $this->scopeConfig->getValue(Config::XML_PAGECACHE_TYPE, ScopeInterface::SCOPE_STORE);
+        return $cachingApp === Config::VARNISH;
+    }
+
     /**
      * @param $poolTag string
      * @return bool
@@ -26,6 +68,10 @@ class PurgeCache extends CorePurgeCache
      */
     public function sendPoolPurgeRequest(string $poolTag): bool
     {
+        if (!$this->getIsPurgeNecessary()) {
+            return true;
+        }
+
         $socketAdapter = $this->socketAdapterFactory->create();
         $servers = $this->cacheServer->getUris();
         $socketAdapter->setOptions(['timeout' => 10]);
@@ -33,6 +79,7 @@ class PurgeCache extends CorePurgeCache
         
         foreach ($servers as $server) {
             $headers['Host'] = $server->getHost();
+
             try {
                 $socketAdapter->connect($server->getHost(), $server->getPort());
                 $socketAdapter->write(
@@ -43,11 +90,13 @@ class PurgeCache extends CorePurgeCache
                 );
                 $response = $socketAdapter->read();
                 $socketAdapter->close();
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 throw new PurgeCacheException(sprintf('Error reaching Varnish: %s', $e->getMessage()));
             }
+
             $this->validateResponse($server, $response);
         }
+
         return true;
     }
     
@@ -66,8 +115,13 @@ class PurgeCache extends CorePurgeCache
             if ($responseCode === '200') {
                 return true;
             }
-            $message = sprintf('Error flushing Varnish server. Host: "%s". PURGE response code: %s',
-                $server->getHost(), $responseCode);
+
+            $message = sprintf(
+                'Error flushing Varnish server. Host: "%s". PURGE response code: %s',
+                $server->getHost(),
+                $responseCode
+            );
+
             if (isset($regexParse[2])) {
                 $responseMessage = $regexParse[2];
                 $message .= sprintf(' message: %s', trim($responseMessage));
