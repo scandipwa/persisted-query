@@ -342,7 +342,7 @@ class PersistedQuery
         // Prepare document before-hand, otherwise it will drain CPU afterwards
         try {
             $documentNode = Parser::parse(new Source($requestQuery ?: '', 'GraphQL'));
-            $json = json_encode($documentNode);
+            $json = json_encode(AST::toArray($documentNode));
         } catch (SyntaxError $e) {
             $this->logger->error('GraphQL syntax error while saving query to persistence layer', $e);
 
@@ -355,6 +355,7 @@ class PersistedQuery
         }
 
         $update = $this->client->updatePersistentQuery($request->getParam('hash'), $json);
+
         if (!$update) {
             $this->logger->error('Redis failed to save query', debug_backtrace());
 
@@ -366,11 +367,7 @@ class PersistedQuery
                 ]));
         }
 
-        if (is_integer($request->getHeader('SW-cache-age'))) {
-            $this->client->setQueryTTL($request->getParam('hash'), $request->getHeader('SW-cache-age'));
-        } else {
-            $this->client->setQueryTTL($request->getParam('hash'), 0);
-        }
+        $this->client->setQueryTTL($request->getParam('hash'), $request->getHeader('SW-cache-age') ?? 0);
 
         return $this->response
             ->setHeader('Content-Type', 'application/json')
