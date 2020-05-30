@@ -10,31 +10,31 @@
 namespace ScandiPWA\PersistedQuery\Plugin;
 
 use Closure;
-use GraphQL\Error\SyntaxError;
-use GraphQL\Language\AST\DocumentNode;
+use Throwable;
+use GraphQL\Utils\AST;
+use Psr\Log\LoggerInterface;
 use GraphQL\Language\Parser;
 use GraphQL\Language\Source;
-use GraphQL\Utils\AST;
+use InvalidArgumentException;
+use GraphQL\Error\SyntaxError;
+use GraphQL\Language\AST\DocumentNode;
+use Magento\Framework\Webapi\Response;
+use Zend\Http\Response as HttpResponse;
+use Magento\Framework\App\ObjectManager;
+use ScandiPWA\PersistedQuery\RedisClient;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\App\ResponseInterface;
-use Magento\Framework\Controller\Result\JsonFactory;
-use Magento\Framework\GraphQl\Exception\ExceptionFormatter;
-use Magento\Framework\GraphQl\Query\QueryProcessor;
-use Magento\Framework\GraphQl\Schema\SchemaGeneratorInterface;
-use Magento\Framework\Interception\InterceptorInterface;
-use Magento\Framework\Serialize\SerializerInterface;
-use Magento\Framework\Webapi\Response;
-use Magento\GraphQl\Model\Query\ContextFactoryInterface;
-use Psr\Log\LoggerInterface;
-use Magento\Framework\GraphQl\Query\Fields as QueryFields;
-use ScandiPWA\PersistedQuery\Cache\Response as ResponseCache;
-use ScandiPWA\PersistedQuery\RedisClient;
-use Throwable;
-use Zend\Http\Exception\InvalidArgumentException;
-use Zend\Http\Response as HttpResponse;
 use Magento\Framework\App\Cache\StateInterface;
+use Magento\Framework\GraphQl\Query\QueryProcessor;
+use Magento\Framework\Controller\Result\JsonFactory;
+use Magento\Framework\Serialize\SerializerInterface;
+use Magento\Framework\Interception\InterceptorInterface;
+use Magento\GraphQl\Model\Query\ContextFactoryInterface;
+use Magento\Framework\GraphQl\Query\Fields as QueryFields;
+use Magento\Framework\GraphQl\Exception\ExceptionFormatter;
+use ScandiPWA\PersistedQuery\Cache\Response as ResponseCache;
+use Magento\Framework\GraphQl\Schema\SchemaGeneratorInterface;
 use Magento\Framework\App\Response\Http as MagentoHttpResponse;
-use Magento\Framework\App\ObjectManager;
 
 // TODO: refactor file, it looks too complex!
 
@@ -234,7 +234,6 @@ class PersistedQuery
     }
 
     /**
-     * @param RequestInterface $request
      * @param string $queryHash
      * @param DocumentNode $documentNode
      * @param array $variables
@@ -269,24 +268,24 @@ class PersistedQuery
 
         $responseHasError = array_key_exists('errors', $result) && count($result['errors']);
 
-        if (!$responseHasError && $statusCode === 200) {
-            $queryTTL = $this->cacheState ? $this->client->getQueryTTL($queryHash) : 0;
-            $jsonResult->setHeader('X-Pool', ResponseCache::POOL_TAG);
-            $jsonResult->setHeader('Cache-control', 'max-age=' . $queryTTL ?? self::QUERY_TTL);
-        }
-
         $jsonResult->setHttpResponseCode($statusCode);
         $jsonResult->setData($result);
         $jsonResult->renderResult($this->httpResponse);
+
+        // for some reason it must be done directly on the response
+        if (!$responseHasError && $statusCode === 200) {
+            $queryTTL = $this->cacheState ? $this->client->getQueryTTL($queryHash) : 0;
+            $this->httpResponse->setHeader('X-Pool', ResponseCache::POOL_TAG);
+            $this->httpResponse->setHeader('Cache-control', 'max-age=' . $queryTTL ?? self::QUERY_TTL);
+        }
 
         return $this->httpResponse;
     }
 
     /**
-     * @param string $query
-     * @param        $args
+     * @param $args
      * @return array
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     protected function processVariables($args): array
     {
@@ -336,7 +335,7 @@ class PersistedQuery
 
     /**
      * @param RequestInterface $request
-     * @return ResponseInterface|HttpResponse
+     * @return ResponseInterface|MagentoHttpResponse
      * @throws InvalidArgumentException
      */
     private function saveQuery(RequestInterface $request)
