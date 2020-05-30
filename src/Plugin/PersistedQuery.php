@@ -213,8 +213,15 @@ class PersistedQuery
             return $this->saveQuery($request);
         }
 
-        $documentString = json_decode($this->client->getPersistentQuery($queryHash), true);
-        $documentNode = AST::fromArray($documentString);
+        $persistedValue = $this->client->getPersistentQuery($queryHash);
+        $documentString = json_decode($persistedValue, true);
+
+        if (is_array($documentString)) {
+            $documentNode = AST::fromArray($documentString);
+        } else {
+            $documentNode = Parser::parse(new Source($persistedValue ?: '', 'GraphQL'));
+        }
+
         $variables = $this->processVariables($request->getParams());
 
         $result = $this->processGraphqlRequest(
@@ -236,7 +243,7 @@ class PersistedQuery
      */
     protected function processGraphqlRequest(
         string $queryHash,
-        DocumentNode $documentNode,
+        $documentNode,
         array $variables
     ): MagentoHttpResponse {
         $statusCode = 200;
