@@ -22,7 +22,7 @@
         }
     ],
     "require": {
-        "magento/magento2-base": "~2.3.2",
+        "magento/magento2-base": "<2.3.5",
         "colinmollenhour/credis": "^1.10"
     },
     "autoload": {
