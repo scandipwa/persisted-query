@@ -11,7 +11,6 @@ use GraphQL\Error\Debug;
 use GraphQL\GraphQL;
 use Magento\Framework\GraphQl\Exception\ExceptionFormatter;
 use Magento\Framework\GraphQl\Query\QueryProcessor as CoreQueryProcessor;
-use Magento\Framework\GraphQl\Query\ErrorHandlerInterface;
 use Magento\Framework\GraphQl\Query\Promise;
 use Magento\Framework\GraphQl\Query\QueryComplexityLimiter;
 use Magento\Framework\GraphQl\Query\Resolver\ContextInterface;
@@ -33,24 +32,16 @@ class QueryProcessor extends CoreQueryProcessor
     private $queryComplexityLimiter;
 
     /**
-     * @var \Magento\Framework\GraphQl\Query\ErrorHandlerInterface
-     */
-    private $errorHandler;
-
-    /**
      * @param ExceptionFormatter $exceptionFormatter
      * @param QueryComplexityLimiter $queryComplexityLimiter
-     * @param ErrorHandlerInterface $errorHandler
      * @SuppressWarnings(PHPMD.LongVariable)
      */
     public function __construct(
         ExceptionFormatter $exceptionFormatter,
-        QueryComplexityLimiter $queryComplexityLimiter,
-        ErrorHandlerInterface $errorHandler
+        QueryComplexityLimiter $queryComplexityLimiter
     ) {
         $this->exceptionFormatter = $exceptionFormatter;
         $this->queryComplexityLimiter = $queryComplexityLimiter;
-        $this->errorHandler = $errorHandler;
     }
 
     /**
@@ -82,8 +73,6 @@ class QueryProcessor extends CoreQueryProcessor
             $contextValue,
             $variableValues,
             $operationName
-        )->setErrorsHandler(
-            [$this->errorHandler, 'handle']
         )->toArray(
             $this->exceptionFormatter->shouldShowDetail() ?
                 Debug::INCLUDE_DEBUG_MESSAGE : false
