@@ -301,7 +301,7 @@ class PersistedQuery
                     if (strpos($value, '"') !== false || !$value) {
                         continue;
                     }
-                    $item = preg_replace("|(?<![\"\w])" . $value . "(?![\"\w])|", "\"$value\"", $item);
+                    $item = preg_replace("|(?<![\"\w])" . preg_quote($value) . "(?![\"\w])|", "\"$value\"", $item);
                 }
 
                 return $this->serializer->unserialize($item);
