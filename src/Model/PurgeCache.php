@@ -58,7 +58,7 @@ class PurgeCache extends CorePurgeCache
      */
     protected function getIsPurgeNecessary(): bool {
         $cachingApp = $this->scopeConfig->getValue(Config::XML_PAGECACHE_TYPE, ScopeInterface::SCOPE_STORE);
-        return $cachingApp === Config::VARNISH;
+        return $cachingApp == Config::VARNISH;
     }
 
     /**
@@ -76,7 +76,7 @@ class PurgeCache extends CorePurgeCache
         $servers = $this->cacheServer->getUris();
         $socketAdapter->setOptions(['timeout' => 10]);
         $headers = ['X-Pool' => $poolTag];
-        
+
         foreach ($servers as $server) {
             $headers['Host'] = $server->getHost();
 
@@ -99,7 +99,7 @@ class PurgeCache extends CorePurgeCache
 
         return true;
     }
-    
+
     /**
      * @param Uri    $server
      * @param string $response
