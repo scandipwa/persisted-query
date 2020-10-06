@@ -144,11 +144,11 @@ class ConfigOptionsList implements ConfigOptionsListInterface
         }
         if (isset($options[self::INPUT_KEY_PQ_PORT]) &&
             !preg_match('/^[0-9]+$/', $options[self::INPUT_KEY_PQ_PORT])) {
-            $errors[] = "Invlid persisted query redis port";
+            $errors[] = "Invalid persisted query redis port";
         }
         if (isset($options[self::INPUT_KEY_PQ_DATABASE]) &&
             !preg_match('/^[0-9]+$/', $options[self::INPUT_KEY_PQ_DATABASE])) {
-            $errors[] = "Invlid persisted query redis database";
+            $errors[] = "Invalid persisted query redis database";
         }
         if (isset($options[self::INPUT_KEY_PQ_SCHEME]) &&
             !in_array($options[self::INPUT_KEY_PQ_SCHEME], ['tcp', 'udp'])) {
