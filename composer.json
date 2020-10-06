@@ -10,9 +10,11 @@
         "magento/module-cache-invalidate": "*",
         "magento/module-page-cache": "*",
         "magento/module-store": "*",
-        "magento/module-catalog": "*",
         "magento/module-graph-ql": "^100.3",
         "colinmollenhour/credis": "^1.10"
+    },
+    "suggest": {
+        "magento/module-catalog": "To invalidate persisted_query cache after full reindex"
     },
     "autoload": {
         "files": [
