@@ -33,4 +33,10 @@
     <type name="Magento\Catalog\Model\Indexer\Category\Product\Action\Full">
         <plugin name="invalidate_pq_response_cache" type="ScandiPWA\PersistedQuery\Plugin\InvalidatePQCache" />
     </type>
+    
+    <type name="ScandiPWA\PersistedQuery\Console\Command\PersistedQueryFlushCommand">
+        <arguments>
+            <argument name="query" xsi:type="object">ScandiPWA\PersistedQuery\Cache\Query\Proxy</argument>
+        </arguments>
+    </type>
 </config>
