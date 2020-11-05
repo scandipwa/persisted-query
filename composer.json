@@ -6,7 +6,6 @@
         "OSL-3.0"
     ],
     "require": {
-        "ext-redis": "*",
         "magento/framework": "*",
         "magento/module-cache-invalidate": "*",
         "magento/module-page-cache": "*",
