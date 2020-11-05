@@ -291,46 +291,13 @@ class PersistedQuery
     {
         unset($args['hash']);
 
-        return array_map(function ($item) {
-            // Check for complex JSON structures
-            if (preg_match('/^.*:?[{|}].*$/', $item)) {
-                $rawKeys = str_replace(['{', '}', '[', ']'], '', $item);
-                $unifiedString = str_replace(":", ',', $rawKeys);
-                $valueList = explode(',', $unifiedString);
-                foreach ($valueList as $value) {
-                    if (strpos($value, '"') !== false || !$value) {
-                        continue;
-                    }
-                    $item = preg_replace("|(?<![\"\w])" . preg_quote($value) . "(?![\"\w])|", "\"$value\"", $item);
-                }
+        $variables = [];
 
-                return $this->serializer->unserialize($item);
-            }
+        foreach ($args as $key => $value) {
+            $variables[$key] = json_decode(urldecode($value), true);
+        }
 
-            // Check for encoded array
-            if (preg_match('/,/', $item)) {
-                $item = explode(',', $item);
-
-                return $item;
-            }
-
-            // String to bool if bool
-            if ($item === 'true' || $item === 'false') {
-                return filter_var($item, FILTER_VALIDATE_BOOLEAN);
-            }
-
-            // String to int if number
-            if (is_int($item)) {
-                return (int)$item;
-            }
-
-            // String to float if number with decimals
-            if (is_float($item)) {
-                return (float)$item;
-            }
-
-            return $item;
-        }, $args);
+        return $variables;
     }
 
     /**
