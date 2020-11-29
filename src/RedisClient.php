@@ -80,14 +80,15 @@ class RedisClient
      * @param array $redisConfig
      * @return Credis_Client
      */
-    private function redisClientFactory(array $redisConfig): Credis_Client
+    private function redisClientFactory(array $redisConfig)
     {
         return new $this->redisClientClass(
             $redisConfig['host'],
             $redisConfig['port'],
             10,
             '',
-            $redisConfig['database']
+            $redisConfig['database'],
+            $redisConfig['password']
         );
     }
 
