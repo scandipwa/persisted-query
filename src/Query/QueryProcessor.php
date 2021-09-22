@@ -9,6 +9,8 @@ namespace ScandiPWA\PersistedQuery\Query;
 
 use GraphQL\Error\Debug;
 use GraphQL\GraphQL;
+use GraphQL\Validator\DocumentValidator;
+use GraphQL\Validator\Rules\QueryComplexity;
 use Magento\Framework\GraphQl\Exception\ExceptionFormatter;
 use Magento\Framework\GraphQl\Query\QueryProcessor as CoreQueryProcessor;
 use Magento\Framework\GraphQl\Query\ErrorHandlerInterface;
@@ -16,6 +18,7 @@ use Magento\Framework\GraphQl\Query\Promise;
 use Magento\Framework\GraphQl\Query\QueryComplexityLimiter;
 use Magento\Framework\GraphQl\Query\Resolver\ContextInterface;
 use Magento\Framework\GraphQl\Schema;
+use Magento\Framework\App\ResponseInterface;
 
 /**
  * Wrapper for GraphQl execution of a schema
@@ -33,9 +36,14 @@ class QueryProcessor extends CoreQueryProcessor
     private $queryComplexityLimiter;
 
     /**
-     * @var \Magento\Framework\GraphQl\Query\ErrorHandlerInterface
+     * @var ErrorHandlerInterface
      */
     private $errorHandler;
+
+    /**
+     * @var ResponseInterface
+     */
+    private $response;
 
     /**
      * @param ExceptionFormatter $exceptionFormatter
@@ -46,11 +54,19 @@ class QueryProcessor extends CoreQueryProcessor
     public function __construct(
         ExceptionFormatter $exceptionFormatter,
         QueryComplexityLimiter $queryComplexityLimiter,
-        ErrorHandlerInterface $errorHandler
+        ErrorHandlerInterface $errorHandler,
+        ResponseInterface $response
     ) {
+        parent::__construct(
+            $exceptionFormatter,
+            $queryComplexityLimiter,
+            $errorHandler
+        );
+
         $this->exceptionFormatter = $exceptionFormatter;
         $this->queryComplexityLimiter = $queryComplexityLimiter;
         $this->errorHandler = $errorHandler;
+        $this->response = $response;
     }
 
     /**
@@ -70,12 +86,13 @@ class QueryProcessor extends CoreQueryProcessor
         array $variableValues = null,
         string $operationName = null
     ) : array {
-        if (!$this->exceptionFormatter->shouldShowDetail()) {
-            $this->queryComplexityLimiter->execute();
-        }
+        $this->queryComplexityLimiter->execute();
+
+        /** @var QueryComplexity $queryComplexity */
+        $queryComplexity = DocumentValidator::getRule(QueryComplexity::class);
 
         $rootValue = null;
-        return GraphQL::executeQuery(
+        $result = GraphQL::executeQuery(
             $schema,
             $source,
             $rootValue,
@@ -88,5 +105,9 @@ class QueryProcessor extends CoreQueryProcessor
             $this->exceptionFormatter->shouldShowDetail() ?
                 Debug::INCLUDE_DEBUG_MESSAGE : false
         );
+
+        $this->response->setHeader('Query-Complexity', $queryComplexity->getQueryComplexity(), true);
+
+        return $result;
     }
 }
