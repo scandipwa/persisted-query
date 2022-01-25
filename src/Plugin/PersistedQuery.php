@@ -240,7 +240,7 @@ class PersistedQuery
      * @return MagentoHttpResponse
      * @throws Throwable
      */
-    protected function processGraphqlRequest(
+    public function processGraphqlRequest(
         string $queryHash,
         $documentNode,
         array $variables
@@ -305,7 +305,7 @@ class PersistedQuery
      * @return ResponseInterface|MagentoHttpResponse
      * @throws InvalidArgumentException
      */
-    private function saveQuery(RequestInterface $request)
+    protected function saveQuery(RequestInterface $request)
     {
         $requestQuery = $this->serializer->unserialize($request->getContent());
         if (is_array($requestQuery) && array_key_exists('query', $requestQuery)) {
