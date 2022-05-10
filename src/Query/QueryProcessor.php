@@ -103,7 +103,7 @@ class QueryProcessor extends CoreQueryProcessor
             [$this->errorHandler, 'handle']
         )->toArray(
             $this->exceptionFormatter->shouldShowDetail() ?
-                DebugFlag::INCLUDE_DEBUG_MESSAGE : false
+                DebugFlag::INCLUDE_DEBUG_MESSAGE : 0
         );
 
         $this->response->setHeader('Query-Complexity', $queryComplexity->getQueryComplexity(), true);
