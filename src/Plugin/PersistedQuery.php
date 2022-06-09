@@ -294,7 +294,7 @@ class PersistedQuery
         $variables = [];
 
         foreach ($args as $key => $value) {
-            $variables[$key] = json_decode(urldecode($value), true);
+            $variables[$key] = json_decode(rawurldecode($value), true);
         }
 
         return $variables;
