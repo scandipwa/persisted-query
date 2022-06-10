@@ -7,7 +7,7 @@ declare(strict_types=1);
 
 namespace ScandiPWA\PersistedQuery\Query;
 
-use GraphQL\Error\Debug;
+use GraphQL\Error\DebugFlag;
 use GraphQL\GraphQL;
 use GraphQL\Validator\DocumentValidator;
 use GraphQL\Validator\Rules\QueryComplexity;
@@ -103,7 +103,7 @@ class QueryProcessor extends CoreQueryProcessor
             [$this->errorHandler, 'handle']
         )->toArray(
             $this->exceptionFormatter->shouldShowDetail() ?
-                Debug::INCLUDE_DEBUG_MESSAGE : false
+                DebugFlag::INCLUDE_DEBUG_MESSAGE : 0
         );
 
         $this->response->setHeader('Query-Complexity', $queryComplexity->getQueryComplexity(), true);
