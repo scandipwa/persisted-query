@@ -18,7 +18,7 @@ use Magento\Framework\Cache\InvalidateLogger;
 use Magento\PageCache\Model\Cache\Server;
 use Magento\PageCache\Model\Config;
 use Magento\Store\Model\ScopeInterface;
-use Zend\Uri\Uri;
+use Laminas\Uri\Uri;
 
 /**
  * Class PurgeCache
@@ -75,7 +75,10 @@ class PurgeCache extends CorePurgeCache
         $socketAdapter = $this->socketAdapterFactory->create();
         $servers = $this->cacheServer->getUris();
         $socketAdapter->setOptions(['timeout' => 10]);
-        $headers = ['X-Pool' => $poolTag];
+        $headers = [
+            'X-Pool' => $poolTag,
+            'X-Magento-Tags-Pattern' => '.*'
+        ];
 
         foreach ($servers as $server) {
             $headers['Host'] = $server->getHost();
