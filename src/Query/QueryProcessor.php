@@ -106,7 +106,7 @@ class QueryProcessor extends CoreQueryProcessor
                 DebugFlag::INCLUDE_DEBUG_MESSAGE : 0
         );
 
-        $this->response->setHeader('Query-Complexity', $queryComplexity->getQueryComplexity(), true);
+        $this->response->setHeader('Query-Complexity', $queryComplexity->getMaxQueryComplexity(), true);
 
         return $result;
     }
