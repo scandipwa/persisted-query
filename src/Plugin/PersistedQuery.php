@@ -19,7 +19,7 @@ use InvalidArgumentException;
 use GraphQL\Error\SyntaxError;
 use GraphQL\Language\AST\DocumentNode;
 use Magento\Framework\Webapi\Response;
-use Zend\Http\Response as HttpResponse;
+use Laminas\Http\Response as HttpResponse;
 use Magento\Framework\App\ObjectManager;
 use ScandiPWA\PersistedQuery\RedisClient;
 use Magento\Framework\App\RequestInterface;
