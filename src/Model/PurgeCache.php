@@ -18,7 +18,7 @@ use Magento\Framework\Cache\InvalidateLogger;
 use Magento\PageCache\Model\Cache\Server;
 use Magento\PageCache\Model\Config;
 use Magento\Store\Model\ScopeInterface;
-use Zend\Uri\Uri;
+use Laminas\Uri\Uri;
 
 /**
  * Class PurgeCache
