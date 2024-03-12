@@ -53,9 +53,13 @@ class PersistedQueryFlushCommand extends Command
      */
     public function execute(InputInterface $input, OutputInterface $output)
     {
-        if ($this->query->clean()) {
+        $success = $this->query->clean();
+        
+        if ($success) {
             $output->writeln('Persisted query caches flushed (redis + varnish)');
         }
-    }
+        
+        return $success ? 0 : 1; // Returns 0 for success, 1 for failure. Fixes scandipwa:pq:flush launch error on Magento 2.4.6 that says the return of an execute function must be of type int.
+    } 
     
 }
